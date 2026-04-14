@@ -194,6 +194,13 @@ module "s3_bucket_data" {
 }
 ```
 
+## Other Starter Kits
+
+| Kit | Frameworks | Use Case |
+|-----|-----------|---------|
+| [Fintech - PCI DSS v4.0 + SOC 2](https://github.com/compliancetf/starter-kit-fintech-pcidss) | PCI DSS v4.0, SOC 2 | Payment platforms, neobanks, BNPL |
+| [HealthTech - HIPAA + SOC 2](https://github.com/compliancetf/starter-kit-healthtech-hipaa) | HIPAA, SOC 2 | Telehealth, EHR, health data platforms |
+
 ## Links
 
 - [compliance.tf docs](https://compliance.tf/docs/)
