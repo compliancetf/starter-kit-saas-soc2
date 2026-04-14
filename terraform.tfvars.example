@@ -1,0 +1,49 @@
+# =============================================================================
+# B2B SaaS Starter Kit  - SOC 2
+#
+# Copy this file to terraform.tfvars and fill in the required values.
+# Lines marked CHANGEME must be updated before running terraform plan.
+# =============================================================================
+
+# Required  - change these
+project_name       = "starter-kit-saas-soc2"                     # CHANGEME: your project name (lowercase, hyphens ok)
+environment        = "dev"                                       # dev, staging, or prod
+aws_region         = "us-east-1"                                 # CHANGEME: your preferred AWS region
+availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"] # CHANGEME: must match aws_region
+domain_name        = "app.example.com"                           # CHANGEME: your domain for the TLS certificate
+route53_zone_id    = "Z0123456789ABCDEF"                         # CHANGEME: your Route 53 hosted zone ID
+
+# S3 cross-region replication (SOC 2 A1.2  - disaster recovery)
+s3_replication_role_arn               = "arn:aws:iam::123456789012:role/s3-replication"  # CHANGEME: IAM role for replication
+s3_replication_destination_bucket_arn = "arn:aws:s3:::myapp-dr-us-west-2"               # CHANGEME: destination bucket in DR region
+
+# Network  - defaults work for most setups
+# vpc_cidr              = "10.0.0.0/16"
+# public_subnet_cidrs   = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+# private_subnet_cidrs  = ["10.0.11.0/24", "10.0.12.0/24", "10.0.13.0/24"]
+# database_subnet_cidrs = ["10.0.21.0/24", "10.0.22.0/24", "10.0.23.0/24"]
+
+# EKS  - adjust instance types and scaling for your workload
+# eks_cluster_version     = "1.31"
+# eks_node_instance_types = ["t3.medium"]
+# eks_node_min_size       = 2
+# eks_node_max_size       = 6
+# eks_node_desired_size   = 2
+
+# Database  - Aurora PostgreSQL
+# aurora_engine_version  = "16.4"
+# aurora_instance_class  = "db.r6g.large"
+# aurora_master_username = "app_admin"
+
+# ElastiCache  - Redis
+# redis_engine_version = "7.1"
+# redis_node_type      = "cache.t4g.micro"
+
+# Observability
+# log_retention_days = 365
+
+# Additional tags
+# tags = {
+#   Team    = "platform"
+#   CostCenter = "engineering"
+# }
