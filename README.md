@@ -1,6 +1,6 @@
 # B2B SaaS Starter Kit - SOC 2
 
-Pre-composed Terraform configuration that deploys SOC 2-compliant AWS infrastructure for B2B SaaS companies. All modules are sourced from the [compliance.tf](https://compliance.tf) registry, which enforces SOC 2 controls at `terraform plan` time.
+Pre-composed Terraform configuration that deploys SOC 2-compliant AWS infrastructure for B2B SaaS companies. All modules are sourced from the [compliance.tf registry](https://soc2.compliance.tf), which enforces SOC 2 controls at `terraform plan` time.
 
 ## Architecture
 
@@ -44,6 +44,8 @@ terraform apply
 `terraform plan` will fail if any required SOC 2 controls are not satisfied. Fix the reported issues and re-run the plan. With the default configuration, a successful plan creates approximately 107 resources.
 
 ## Module Inventory
+
+Every source below is a browsable page on the registry, with versions, inputs, and outputs - browse all modules at [soc2.compliance.tf](https://soc2.compliance.tf).
 
 | Module | Source | Version | Purpose | Key SOC 2 Controls |
 |--------|--------|---------|---------|---------------------|
