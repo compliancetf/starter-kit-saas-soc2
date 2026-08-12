@@ -12,7 +12,7 @@ Pre-composed Terraform configuration that deploys SOC 2-compliant AWS infrastruc
 - AWS credentials configured (`aws configure` or environment variables)
 - A compliance.tf access token ([sign up](https://compliance.tf) or [start a free trial](https://compliance.tf/free-trial/))
 - A Route 53 hosted zone for your domain (used for ACM DNS validation)
-- **S3 cross-region replication resources** (SOC 2 A1.2 requires data durability):
+- **S3 cross-region replication resources** (supports the SOC 2 A1.2 availability criterion):
   - An IAM role ARN authorized for S3 replication (`s3_replication_role_arn`)
   - A destination S3 bucket in your DR region (`s3_replication_destination_bucket_arn`)
 
@@ -58,16 +58,16 @@ Every source below is a browsable page on the registry, with versions, inputs, a
 | `rds_aurora` | `soc2.compliance.tf/terraform-aws-modules/rds-aurora/aws` | `~> 10.0` | Aurora PostgreSQL (Multi-AZ, encrypted) | CC6.1 (encryption, IAM auth), A1.2 (failover, backups) |
 | `s3_bucket_data` | `soc2.compliance.tf/terraform-aws-modules/s3-bucket/aws` | `~> 5.0` | Application data with cross-region replication | CC6.1 (encryption, no public access), CC7.2 (versioning), A1.2 (cross-region replication) |
 | `s3_bucket_logs` | `soc2.compliance.tf/terraform-aws-modules/s3-bucket/aws` | `~> 5.0` | Centralized access logs (ALB + S3) with cross-region replication | CC7.1 (log retention), CC8.1 (audit trail), A1.2 (cross-region replication) |
-| `dynamodb` | `soc2.compliance.tf/terraform-aws-modules/dynamodb-table/aws` | `~> 5.0` | Key-value store with PITR | CC6.1 (encryption), A1.2 (point-in-time recovery) |
+| `dynamodb` | `soc2.compliance.tf/terraform-aws-modules/dynamodb-table/aws` | `~> 5.0` | Key-value store with point-in-time recovery | CC6.1 (encryption), A1.2 (point-in-time recovery) |
 | `elasticache` | `soc2.compliance.tf/terraform-aws-modules/elasticache/aws` | `~> 1.0` | Redis cache (encrypted, auth) | CC6.1 (encryption at rest + transit), A1.2 (failover) |
-| `sqs` | `soc2.compliance.tf/terraform-aws-modules/sqs/aws` | `~> 5.0` | Message queue with DLQ | CC6.1 (SSE encryption), CC7.2 (dead-letter queue) |
+| `sqs` | `soc2.compliance.tf/terraform-aws-modules/sqs/aws` | `~> 5.0` | Message queue with a dead-letter queue | CC6.1 (SSE encryption), CC7.2 (dead-letter queue) |
 | `cloudwatch` | `soc2.compliance.tf/terraform-aws-modules/cloudwatch/aws` | `~> 5.0` | Application log group | CC7.1 (centralized logging), CC7.2 (retention policy) |
 
 ## SOC 2 Control Coverage
 
 | SOC 2 Criterion | Description | Module(s) | What's Enforced |
 |-----------------|-------------|-----------|-----------------|
-| CC6.1 | Logical access security | KMS, RDS Aurora, S3, EKS, ElastiCache, DynamoDB, SQS | Encryption at rest, customer-managed keys, no public access, IAM authentication |
+| CC6.1 | Logical access security | KMS, RDS Aurora, S3, EKS, ElastiCache, DynamoDB, SQS | Encryption at rest (customer-managed key for EKS logs), no public access, IAM authentication |
 | CC6.6 | Measures against external threats | ALB, WAF | TLS 1.2+ (TLS 1.3 policy), security groups restricted to HTTPS, WAF with AWS managed rules (OWASP Top 10, known bad inputs, IP reputation) |
 | CC6.7 | Restrict data transmission | ALB, ElastiCache | HTTPS-only listeners, transit encryption enabled |
 | CC7.1 | Detection and monitoring | VPC, ALB, RDS Aurora, CloudWatch, S3 (logs) | VPC flow logs, ALB access logs, PostgreSQL log exports, CloudWatch log groups |
@@ -99,7 +99,7 @@ Every source below is a browsable page on the registry, with versions, inputs, a
 - Access reviews and user lifecycle management
 - Application-level audit logging (business events)
 
-compliance.tf does not replace your SOC 2 auditor. It ensures your AWS infrastructure meets the technical control requirements so you can focus on the organizational controls that auditors also evaluate.
+compliance.tf does not replace your SOC 2 auditor. Infrastructure controls are implemented and enforced by the modules; the auditor still verifies them, and separately assesses the organizational controls no infrastructure tool covers.
 
 ## Cost Estimate
 
@@ -190,18 +190,19 @@ If a SOC 2 control does not apply to your use case, disable it with a query para
 
 ```tf
 module "s3_bucket_data" {
-  source  = "soc2.compliance.tf/terraform-aws-modules/s3-bucket/aws?disable=s3_bucket_object_lock_enabled"
-  version = "~> 5.0"
+  source = "https://soc2.compliance.tf/terraform-aws-modules/s3-bucket/aws?version=5.12.0&disable=s3_bucket_object_lock_enabled"
   # ...
 }
 ```
+
+Query parameters require the HTTPS URL format (the Registry source format does not support them). The version parameter pins an exact version - omit it to get the latest, but pin anything beyond experiments.
 
 ## Other Starter Kits
 
 | Kit | Frameworks | Use Case |
 |-----|-----------|---------|
-| [Fintech - PCI DSS v4.0 + SOC 2](https://github.com/compliancetf/starter-kit-fintech-pcidss) | PCI DSS v4.0, SOC 2 | Payment platforms, neobanks, BNPL |
-| [HealthTech - HIPAA + SOC 2](https://github.com/compliancetf/starter-kit-healthtech-hipaa) | HIPAA, SOC 2 | Telehealth, EHR, health data platforms |
+| [Fintech - PCI DSS v4.0](https://github.com/compliancetf/starter-kit-fintech-pcidss) | PCI DSS v4.0 | Payment platforms, neobanks, BNPL |
+| [HealthTech - HIPAA](https://github.com/compliancetf/starter-kit-healthtech-hipaa) | HIPAA | Telehealth, EHR, health data platforms |
 
 ## Links
 
